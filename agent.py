@@ -1,8 +1,10 @@
-import logging
+import asyncio
 import os
-
-from livekit.agents import Agent, AgentSession, JobContext, WorkerOptions, cli
-from livekit.plugins import deepgram, elevenlabs, openai, silero
+import logging
+from dotenv import load_dotenv
+from livekit import agents, rtc
+from livekit.agents import AgentSession, Agent, RoomInputOptions
+from livekit.plugins import openai, elevenlabs, deepgram, silero
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
