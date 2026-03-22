@@ -1,20 +1,11 @@
-import asyncio
 import os
 import logging
 from dotenv import load_dotenv
-from livekit import agents, rtc
+from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import openai, elevenlabs, deepgram, silero
 
-import asyncio
-import os
-import logging
-from dotenv import load_dotenv
-from livekit import agents, rtc
-from livekit.agents import AgentSession, Agent, RoomInputOptions
-from livekit.plugins import openai, elevenlabs, deepgram, silero
-
-load_dotenv() logger = logging.getLogger("stella")
+load_dotenv() logging.basicConfig(level=logging.INFO) logger = logging.getLogger("stella")
 
 SYSTEM_PROMPT = """You are Stella, the AI receptionist and booking assistant for 'Liwan's Massage Therapy Centre' located in Coventry Village, Shop 83, 243–253 Walter Rd W, Morley WA 6062.
 
@@ -42,20 +33,15 @@ BOOKING: After every answer, ask if they'd like to book between 9am–7pm. Sugge
 
 class StellaAgent(Agent): def init(self): super().init(instructions=SYSTEM_PROMPT)
 
-async def entrypoint(ctx: agents.JobContext): await ctx.connect()
+async def entrypoint(ctx: agents.JobContext): print(f"JOB RECEIVED: room={ctx.room.name}", flush=True) logger.info(f"JOB RECEIVED - room: {ctx.room.name}")
 
-session = AgentSession(
-    stt=deepgram.STT(model="nova-3"),
-    llm=openai.LLM(model="gpt-4o"),
-    tts=elevenlabs.TTS(
-        voice_id=os.getenv("ELEVEN_VOICE_ID", "tyepWYJJwJM9TTFIg5U7"),
-        model=os.getenv("ELEVEN_MODEL_ID", "eleven_turbo_v2_5"),
-    ),
-    vad=silero.VAD.load(),
-)
+await ctx.connect()
+logger.info("Connected to room")
+
+session = AgentSession( stt=deepgram.STT(model="nova-3"), llm=openai.LLM(model="gpt-4o"), tts=elevenlabs.TTS( voice_id=os.getenv("ELEVEN_VOICE_ID", "tyepWYJJwJM9TTFIg5U7"), model=os.getenv("ELEVEN_MODEL_ID", "eleven_turbo_v2_5"), ), vad=silero.VAD.load(), )
 
 await session.start( room=ctx.room, agent=StellaAgent(), room_input_options=RoomInputOptions(), )
 
 await session.generate_reply( instructions="Greet the caller: 'Welcome to Liwan's Massage Therapy Centre, this is Stella speaking. How can I help you today?'" )
 
-if name == "main": agents.cli.run_app( agents.WorkerOptions(entrypoint_fnc=entrypoint) )
+if name == "main": agents.cli.run_app( agents.WorkerOptions( entrypoint_fnc=entrypoint, agent_name="stella", ) )
