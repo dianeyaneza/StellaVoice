@@ -5,9 +5,7 @@ from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions
 from livekit.plugins import openai, elevenlabs, deepgram, silero
 
-load_dotenv() logging.basicConfig(level=logging.INFO) logger = logging.getLogger("stella")
-
-SYSTEM_PROMPT = """You are Stella, the AI receptionist and booking assistant for 'Liwan's Massage Therapy Centre' located in Coventry Village, Shop 83, 243-253 Walter Rd W, Morley WA 6062.
+load_dotenv() logging.basicConfig(level=logging.INFO) logger = logging.getLogger("stella")SYSTEM_PROMPT = """You are Stella, the AI receptionist and booking assistant for 'Liwan's Massage Therapy Centre' located in Coventry Village, Shop 83, 243-253 Walter Rd W, Morley WA 6062.
 
 You speak in a calm, friendly, professional tone. You help callers understand services, prices, durations, package deals and health-fund eligibility, and help them book a treatment.
 
